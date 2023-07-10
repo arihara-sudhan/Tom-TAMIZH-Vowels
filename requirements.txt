@@ -1,0 +1,7 @@
+faiss-cpu==1.7.4
+pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
+Pillow @ file:///tmp/build/80754af9/pillow_1617383569452/work
+pygame==2.5.0
+torch==2.0.1
+torchvision==0.15.2
+
