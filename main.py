@@ -3,6 +3,7 @@ import cv2
 import torch
 from torch.utils.data import DataLoader
 import sys
+import time
 import torchvision.transforms as transforms
 from PIL import Image
 import numpy as np
@@ -27,20 +28,6 @@ transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor()
 ])
-
-labelsd = {'0':"அ",
-           '1':'ஆ',
-           '2':'இ',
-           '3':'ஈ',
-          '4':'உ',
-           '5':'ஊ',
-           '6':'எ',
-           '7':'ஏ',
-           '8':'ஐ',
-           '9':'ஒ',
-           '10':'ஓ',
-           '11':'ஔ'
-          }
 
 with open('embeddings/embedding_data.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -117,7 +104,7 @@ class TomCounts_ARI:
 		self.width = 1920
 		self.height = 1080
 		self.disp = pygame.display.set_mode((self.width,self.height),0,0)
-		pygame.display.set_caption("MNIST Tom")
+		pygame.display.set_caption("Tom learns TAMIZH Vowels")
 		self.img = pygame.image.load("Speak/0001.jpg")
 		self.img = pygame.transform.scale(self.img,(w+120,h+160))
 		self.CAPTURE_ALL()
@@ -131,17 +118,8 @@ class TomCounts_ARI:
 		else:
 			self.disp.blit(self.img,(560,0,0,0))
 		self.disp.blit(self.imgframe,(0,0,0,0))
-		text1 = self.font.render("TOM DETECTED "+str(self.det), True, white)
-		text1Rect = text1.get_rect()
-		text1Rect.center = (w//2,h)
-		self.blittext()
 		pygame.display.update()
 
-	def blittext(self):
-		text1 = self.font.render("TOM DETECTED "+str(self.det), True, white)
-		text1Rect = text1.get_rect()
-		text1Rect.center = (w//2+600,h+40)
-		self.disp.blit(text1,text1Rect)
  
 	def playAudioARI(self,op):
 		i = 1
@@ -152,11 +130,11 @@ class TomCounts_ARI:
 			img = pygame.image.load("Speak/0"+str(i).zfill(3)+".jpg")
 			img = pygame.transform.scale(img,(w+120,h+160))
 			self.disp.blit(img,(560,0,0,0))
+			time.sleep(0.0321)
 			i+=1
 			if(i==10):
 				return
 			self.disp.blit(self.imgframe,(0,0,0,0))
-			self.blittext()
 			pygame.display.update()
 
 	def CAPTURE_ALL(self):
@@ -171,10 +149,8 @@ class TomCounts_ARI:
 		    image_tensor = image_tensor.unsqueeze(0)
 		    emb = model_loaded(image_tensor)
 		    label = index.search(emb.detach().reshape(1,-1),1)[1][0][0]
-		    value = labelsd[str(labels[label])]
-		    self.det = f'{labels[label]}'
-		    
-		    self.blitForever(f'SpeakAud/0.mp3')
+		    self.det = str(labels[label])
+		    self.blitForever(f'SpeakAud/{self.det}.mp3')
 
 		    self.blitForever()
 		    for	eve in pygame.event.get():
